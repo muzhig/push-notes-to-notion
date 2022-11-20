@@ -1,26 +1,55 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from 'react'
+import './App.css'
+import Button from '@mui/material/Button'
+import Stack from '@mui/material/Stack'
+
 
 function App() {
+    const oauthClientId: string = process.env.REACT_APP_NOTION_OAUTH_CLIENT_ID || ''
+    const oauthHandlerURI: string = process.env.REACT_APP_NOTION_OAUTH_REDIRECT_URI || ''
+    const state = JSON.stringify({
+        return_url: process.env.PUBLIC_URL
+    })
+    const authorizeUrl = `https://api.notion.com/v1/oauth/authorize?client_id=${encodeURIComponent(oauthClientId)}&response_type=code&owner=user&redirect_uri=${encodeURIComponent(oauthHandlerURI)}&state=${encodeURIComponent(state)}`
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+          <Stack spacing={2}>
+              <Button
+                  variant="contained"
+                  startIcon={<img src="/notion_logo.png" alt="notion logo" width={50}/>}
+                  size="large"
+                  sx={{p:4}}
+                  target="_blank"
+                  href={authorizeUrl}
+              >
+                  Authorize via Notion
+              </Button>
+
+              <Button
+                  variant="contained"
+                  startIcon={<img src="/telegram_logo.png" alt="telegram logo" width={50}/>}
+                  size="large"
+                  sx={{p:4}}
+                  target="_blank"
+                  href="https://t.me/push_to_notion_bot"
+              >
+                  Authorize Telegram
+              </Button>
+
+              <Button
+                  variant="contained"
+                  startIcon={<img src="/slack_logo.png" alt="slack logo" width={50}/>}
+                  size="large"
+                  sx={{p:4}}
+                  disabled
+              >
+                  Authorize via Slack
+              </Button>
+          </Stack>
       </header>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
