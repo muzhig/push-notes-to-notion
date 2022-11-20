@@ -24,7 +24,6 @@ function App() {
                   startIcon={<img src="/notion_logo.png" alt="notion logo" width={50}/>}
                   size="large"
                   sx={{p:4}}
-                  target="_blank"
                   href={authorizeUrl}
                   disabled={!!userId}
                   endIcon={(!!userId)?<DoneIcon/>:<LoginIcon/>}
