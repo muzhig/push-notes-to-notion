@@ -2,6 +2,8 @@ import React from 'react'
 import './App.css'
 import Button from '@mui/material/Button'
 import Stack from '@mui/material/Stack'
+import DoneIcon from '@mui/icons-material/Done'
+import LoginIcon from '@mui/icons-material/Login'
 
 
 function App() {
@@ -11,6 +13,8 @@ function App() {
         return_url: process.env.PUBLIC_URL
     })
     const authorizeUrl = `https://api.notion.com/v1/oauth/authorize?client_id=${encodeURIComponent(oauthClientId)}&response_type=code&owner=user&redirect_uri=${encodeURIComponent(oauthHandlerURI)}&state=${encodeURIComponent(state)}`
+    const userId = new URLSearchParams(window.location.search).get('user');
+
   return (
     <div className="App">
       <header className="App-header">
@@ -22,6 +26,8 @@ function App() {
                   sx={{p:4}}
                   target="_blank"
                   href={authorizeUrl}
+                  disabled={!!userId}
+                  endIcon={(!!userId)?<DoneIcon/>:<LoginIcon/>}
               >
                   Authorize via Notion
               </Button>
@@ -32,7 +38,7 @@ function App() {
                   size="large"
                   sx={{p:4}}
                   target="_blank"
-                  href="https://t.me/push_to_notion_bot"
+                  href={`https://t.me/push_to_notion_bot?start=${userId}`}
               >
                   Authorize Telegram
               </Button>
