@@ -1,4 +1,4 @@
-# push-notes-to-notion
+# push-to-notion
 TODO:
 
 - Notion OAuth
