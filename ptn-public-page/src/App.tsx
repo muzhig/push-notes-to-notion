@@ -38,6 +38,7 @@ function App() {
                   sx={{p:4}}
                   target="_blank"
                   href={`https://t.me/push_to_notion_bot?start=${userId}`}
+                  disabled={!userId}
               >
                   Authorize Telegram
               </Button>
@@ -49,7 +50,7 @@ function App() {
                   sx={{p:4}}
                   disabled
               >
-                  Authorize via Slack
+                  Authorize Slack (WIP)
               </Button>
           </Stack>
       </header>
