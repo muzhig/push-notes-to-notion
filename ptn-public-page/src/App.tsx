@@ -15,8 +15,9 @@ function App() {
   const userId = new URLSearchParams(window.location.search).get('user');
   const slackOauthClientId: string = process.env.REACT_APP_SLACK_OAUTH_CLIENT_ID || ''
   const slackOauthHandlerURI: string = process.env.REACT_APP_SLACK_OAUTH_REDIRECT_URI || ''
-  const slackAuthState = JSON.stringify({return_url: process.env.PUBLIC_URL + `?user=${userId}`, user: userId})
-  const authorizeSlackUrl = `https://slack.com/oauth/v2/authorize?client_id=${encodeURIComponent(slackOauthClientId)}&scope=reactions:write,chat:write,files:read,chat:write.public,commands,im:read,app_mentions:read,im:history&user_scope=identify&state=${encodeURIComponent(slackAuthState)}&redirect_uri=${encodeURIComponent(slackOauthHandlerURI)}`
+  const slackAuthState = JSON.stringify({return_url: process.env.PUBLIC_URL, user: userId})
+  const scope = 'reactions:write,chat:write,files:read,chat:write.public,commands,im:read,app_mentions:read,im:history'
+  const authorizeSlackUrl = `https://slack.com/oauth/v2/authorize?client_id=${encodeURIComponent(slackOauthClientId)}&scope=${scope}&user_scope=identify&state=${encodeURIComponent(slackAuthState)}&redirect_uri=${encodeURIComponent(slackOauthHandlerURI)}`
 
   return (
     <div className="App">
