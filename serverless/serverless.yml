@@ -128,7 +128,6 @@ functions:
       SLACK_OAUTH_CLIENT_ID: ${env:SLACK_OAUTH_CLIENT_ID}
       SLACK_OAUTH_SECRET: ${env:SLACK_OAUTH_SECRET}
       SLACK_OAUTH_REDIRECT_URI: ${env:SLACK_OAUTH_REDIRECT_URI}
-      SLACK_VERIFICATION_TOKEN: ${env:SLACK_VERIFICATION_TOKEN}
 custom:
   pythonRequirements:
     dockerizePip: true

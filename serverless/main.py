@@ -132,9 +132,6 @@ def slack_oauth_handler(event: dict, context: dict) -> dict:
     client, secret = os.environ["SLACK_OAUTH_CLIENT_ID"], os.environ["SLACK_OAUTH_SECRET"]
     code = event["queryStringParameters"]["code"]
     raw_state = event["queryStringParameters"]["state"]
-    request = parse_request(event)
-    if not verify_slack_origin(request):
-        return {"statusCode": 201}
     state = json.loads(raw_state)
     resp = requests.post('https://slack.com/api/oauth.v2.access', data={
         "client_id": client,
