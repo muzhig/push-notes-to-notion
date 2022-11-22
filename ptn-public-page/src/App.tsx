@@ -42,6 +42,7 @@ function App() {
             sx={{p:4}}
             href={authorizeSlackUrl}
             disabled={!userId || !!slackDone}
+            endIcon={(!!slackDone)?<DoneIcon/>:<span/>}
           >
             Authorize Slack
           </Button>
