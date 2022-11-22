@@ -1,0 +1,5 @@
+python-telegram-bot
+sentry-sdk
+requests
+sentry_sdk
+pynamodb

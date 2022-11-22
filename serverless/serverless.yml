@@ -1,0 +1,133 @@
+org: muzhig
+app: push-to-notion
+service: ${env:SERVICE_NAME}
+frameworkVersion: '3'
+useDotenv: true
+variablesResolutionMode: 20210326
+configValidationMode: error
+
+provider:
+  name: aws
+  profile: ${env:AWS_PROFILE, "default"}
+  region: ${env:AWS_REGION, "us-east-1"}
+  runtime: python3.9
+  lambdaHashingVersion: 20201221
+  memorySize: 128
+  environment:
+    TELEGRAM_BOT_TOKEN: ${env:TELEGRAM_BOT_TOKEN}
+    SENTRY_DSN: ${env:SENTRY_DSN}
+    STAGE: ${opt:stage, 'dev'}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource: "*"
+resources: # CloudFormation template syntax from here on.
+  - Resources:
+      usersTable:
+        Type: AWS::DynamoDB::Table
+        Properties:
+          TableName: ptn-users
+          AttributeDefinitions:
+            - AttributeName: id
+              AttributeType: S
+            - AttributeName: telegram_chat_id
+              AttributeType: S
+            - AttributeName: notion_bot_id
+              AttributeType: S
+            - AttributeName: slack_team_id
+              AttributeType: S
+          KeySchema:
+            - AttributeName: id
+              KeyType: HASH
+          GlobalSecondaryIndexes:
+            - IndexName: UserByTelegramChatId
+              KeySchema:
+                - AttributeName: telegram_chat_id
+                  KeyType: HASH
+              Projection:
+                ProjectionType: 'ALL'
+            - IndexName: UserByNotionBot
+              KeySchema:
+                - AttributeName: notion_bot_id
+                  KeyType: HASH
+              Projection:
+                ProjectionType: 'ALL'
+            - IndexName: UserBySlackTeamId
+              KeySchema:
+                - AttributeName: slack_team_id
+                  KeyType: HASH
+              Projection:
+                ProjectionType: 'ALL'
+          BillingMode: PAY_PER_REQUEST
+          TimeToLiveSpecification:
+            AttributeName: expires
+            Enabled: true
+
+plugins:
+  - serverless-python-requirements
+package:
+  patterns:
+    - '!node_modules/**'
+    - '!package-lock.json'
+
+
+functions:
+  telegramWebhook:
+    handler: main.telegram_webhook_handler
+    events:
+      - http:
+          path: ${env:TELEGRAM_WEBHOOK_ENDPOINT, "/telegram"}
+          method: POST
+    reservedConcurrency: 1
+    timeout: 60
+
+  notionOauth:
+    handler: main.notion_oauth
+    events:
+      - http:
+          path: ${env:NOTION_OAUTH_ENDPOINT, "/notion/oauth"}
+          method: GET
+    reservedConcurrency: 1
+    timeout: 60
+    environment:
+      NOTION_OAUTH_CLIENT_ID: ${env:NOTION_OAUTH_CLIENT_ID}
+      NOTION_OAUTH_SECRET: ${env:NOTION_OAUTH_SECRET}
+      NOTION_OAUTH_REDIRECT_URI: ${env:NOTION_OAUTH_REDIRECT_URI}
+
+  slackWebhook:
+    handler: main.slack_webhook_handler
+    events:
+      - http:
+          path: ${env:SLACK_WEBHOOK_ENDPOINT, "/slack"}
+          method: POST
+    reservedConcurrency: 1
+    timeout: 60
+    environment:
+      SLACK_OAUTH_CLIENT_ID: ${env:SLACK_OAUTH_CLIENT_ID}
+      SLACK_OAUTH_SECRET: ${env:SLACK_OAUTH_SECRET}
+      SLACK_APP: ${env:SLACK_APP}
+      SLACK_VERIFICATION_TOKEN: ${env:SLACK_VERIFICATION_TOKEN}
+
+  slackOauth:
+    handler: main.slack_oauth_handler
+    events:
+      - http:
+          path: ${env:SLACK_OAUTH_ENDPOINT, "/slack/oauth"}
+          method: GET
+    reservedConcurrency: 1
+    timeout: 60
+    environment:
+      SLACK_OAUTH_CLIENT_ID: ${env:SLACK_OAUTH_CLIENT_ID}
+      SLACK_OAUTH_SECRET: ${env:SLACK_OAUTH_SECRET}
+      SLACK_OAUTH_REDIRECT_URI: ${env:SLACK_OAUTH_REDIRECT_URI}
+custom:
+  pythonRequirements:
+    dockerizePip: true
