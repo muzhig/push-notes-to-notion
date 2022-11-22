@@ -13,6 +13,7 @@ function App() {
   const authorizeNotionUrl = `https://api.notion.com/v1/oauth/authorize?client_id=${encodeURIComponent(notionOauthClientId)}&response_type=code&owner=user&redirect_uri=${encodeURIComponent(notionOauthHandlerURI)}&state=${encodeURIComponent(notionAuthState)}`
 
   const userId = new URLSearchParams(window.location.search).get('user');
+  const slackDone = new URLSearchParams(window.location.search).get('slack');
   const slackOauthClientId: string = process.env.REACT_APP_SLACK_OAUTH_CLIENT_ID || ''
   const slackOauthHandlerURI: string = process.env.REACT_APP_SLACK_OAUTH_REDIRECT_URI || ''
   const slackAuthState = JSON.stringify({return_url: process.env.PUBLIC_URL, user: userId})
@@ -34,7 +35,16 @@ function App() {
           >
             Authorize via Notion
           </Button>
-
+          <Button
+            variant="contained"
+            startIcon={<img src="/slack_logo.png" alt="slack logo" width={50}/>}
+            size="large"
+            sx={{p:4}}
+            href={authorizeSlackUrl}
+            disabled={!userId || !!slackDone}
+          >
+            Authorize Slack
+          </Button>
           <Button
             variant="contained"
             startIcon={<img src="/telegram_logo.png" alt="telegram logo" width={50}/>}
@@ -45,17 +55,6 @@ function App() {
             disabled={!userId}
           >
             Authorize Telegram
-          </Button>
-
-          <Button
-            variant="contained"
-            startIcon={<img src="/slack_logo.png" alt="slack logo" width={50}/>}
-            size="large"
-            sx={{p:4}}
-            href={authorizeSlackUrl}
-            disabled={!userId}
-          >
-            Authorize Slack
           </Button>
         </Stack>
       </header>
