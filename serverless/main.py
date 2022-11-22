@@ -181,7 +181,7 @@ def parse_request(event):
     content_type = event["headers"].get("Content-Type")
     if content_type == "application/x-www-form-urlencoded":
         data.update(urllib.parse.parse_qsl(event["body"]))
-    elif content_type.startswith("application/json"):
+    elif content_type and content_type.startswith("application/json"):
         data.update(json.loads(event["body"]))
     return data
 
