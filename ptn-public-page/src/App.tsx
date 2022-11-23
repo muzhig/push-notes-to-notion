@@ -4,6 +4,7 @@ import Button from '@mui/material/Button'
 import Stack from '@mui/material/Stack'
 import DoneIcon from '@mui/icons-material/Done'
 import LoginIcon from '@mui/icons-material/Login'
+import {TextField} from "@mui/material";
 
 
 function App() {
@@ -19,7 +20,6 @@ function App() {
   const slackAuthState = JSON.stringify({return_url: process.env.PUBLIC_URL, user: userId})
   const scope = 'reactions:write,chat:write,files:read,chat:write.public,commands,im:read,app_mentions:read,im:history'
   const authorizeSlackUrl = `https://slack.com/oauth/v2/authorize?client_id=${encodeURIComponent(slackOauthClientId)}&scope=${scope}&user_scope=identify&state=${encodeURIComponent(slackAuthState)}&redirect_uri=${encodeURIComponent(slackOauthHandlerURI)}`
-
   return (
     <div className="App">
       <header className="App-header">
@@ -57,6 +57,26 @@ function App() {
           >
             Authorize Telegram
           </Button>
+          <Button
+            variant="contained"
+            startIcon={<img src="/alfred_logo.png" alt="alfred logo" width={50}/>}
+            size="large"
+            sx={{p:4}}
+            target="_blank"
+            href={`${process.env.PUBLIC_URL}/Push To Notion.alfredworkflow`}
+            disabled={!userId}
+          >
+            Alfred Workflow
+          </Button>
+          {
+            !!userId &&
+            <TextField
+              label="Your token"
+              value={userId}
+              // disabled
+              inputProps={{readOnly: true}}
+              onFocus={event => { event.target.select() }}/>
+          }
         </Stack>
       </header>
     </div>
