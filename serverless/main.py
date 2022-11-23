@@ -175,7 +175,8 @@ def slack_oauth_handler(event: dict, context: dict) -> dict:
 
 def parse_request(event):
     data = dict(event["queryStringParameters"] or {})
-    content_type = event["headers"].get("Content-Type")
+    lower_headers = {k.lower(): v for k, v in event.get("headers", {}).items()}
+    content_type = lower_headers.get("content-type")
     if content_type == "application/x-www-form-urlencoded":
         data.update(urllib.parse.parse_qsl(event["body"]))
     elif content_type and content_type.startswith("application/json"):
@@ -239,6 +240,35 @@ def slack_webhook_handler(event: dict, context: dict) -> dict:
                 )
             except StopIteration:
                 logger.error("Unknown user")
+    return {
+        "statusCode": 201,
+    }
+
+
+def push_to_notion(event: dict, context: dict) -> dict:
+    request = parse_request(event)
+    user_id = request.get("user")
+    if not user_id:
+        return {
+            "statusCode": 400,
+            "body": "expected parameter: user"
+        }
+    try:
+        user = User.get(user_id)
+    except User.DoesNotExist:
+        return {
+            "statusCode": 404,
+            "body": "Unknown user"
+        }
+    text = request.get("text")
+    if not text and event["headers"].get("Content-Type") == "plain/text":
+        text = event["body"]
+    if not text:
+        return {
+            "statusCode": 400,
+            "body": "expected parameter: text"
+        }
+    user.push_to_notion(text)
     return {
         "statusCode": 201,
     }
