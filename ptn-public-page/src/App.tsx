@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 import './App.css'
 import Button from '@mui/material/Button'
 import Stack from '@mui/material/Stack'
@@ -20,9 +20,19 @@ function App() {
   const slackAuthState = JSON.stringify({return_url: process.env.PUBLIC_URL, user: userId})
   const scope = 'reactions:write,chat:write,files:read,chat:write.public,commands,im:read,app_mentions:read,im:history'
   const authorizeSlackUrl = `https://slack.com/oauth/v2/authorize?client_id=${encodeURIComponent(slackOauthClientId)}&scope=${scope}&user_scope=identify&state=${encodeURIComponent(slackAuthState)}&redirect_uri=${encodeURIComponent(slackOauthHandlerURI)}`
+  const [isTokenVisible, setIsTokenVisible] = useState(false)
   return (
     <div className="App">
       <header className="App-header">
+        <div className={'sticky-corner'}>
+          <a href="https://potapov.dev" target="_blank" rel="noreferrer" title="Arseniy Potapov"><span>👨‍💻</span></a>
+          <a href="https://github.com/muzhig/push-to-notion" target="_blank" rel="noreferrer" title="Source on Github">
+            <img src="/github.svg" alt="Github repo"/>
+          </a>
+        </div>
+
+        <h1>Push → Notion</h1>
+        <p>Forwards text input directly to your Notion page</p>
         <Stack spacing={2}>
           <Button
             variant="contained"
@@ -55,7 +65,7 @@ function App() {
             href={`https://t.me/push_to_notion_bot?start=${userId}`}
             disabled={!userId}
           >
-            Authorize Telegram
+            Telegram Bot
           </Button>
           <Button
             variant="contained"
@@ -65,17 +75,20 @@ function App() {
             target="_blank"
             href={`${process.env.PUBLIC_URL}/Push To Notion.alfredworkflow`}
             disabled={!userId}
+            onClick={(event)=>{setIsTokenVisible(true)}}
           >
             Alfred Workflow
           </Button>
           {
-            !!userId &&
+            isTokenVisible &&
             <TextField
               label="Your token"
               value={userId}
               // disabled
               inputProps={{readOnly: true}}
-              onFocus={event => { event.target.select() }}/>
+              onFocus={event => { event.target.select() }}
+              autoFocus={true}
+            />
           }
         </Stack>
       </header>
