@@ -25,8 +25,8 @@ function App() {
     <div className="App">
       <header className="App-header">
         <div className={'sticky-corner'}>
-          <a href="https://potapov.dev" target="_blank" rel="noreferrer" title="Arseniy Potapov"><span>👨‍💻</span></a>
-          <a href="https://github.com/muzhig/push-to-notion" target="_blank" rel="noreferrer" title="Source on Github">
+          <a href="https://potapov.dev" target="_blank" rel="author" title="Arseniy Potapov"><span>👨‍💻</span></a>
+          <a href="https://github.com/muzhig/push-to-notion" target="_blank" rel="external" title="Source on Github">
             <img src="/github.svg" alt="Github repo"/>
           </a>
         </div>
