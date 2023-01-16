@@ -31,9 +31,7 @@ def handle_telegram_push_to_notion(upd: Update):
 
 
 def offer_to_connect_notion(upd: Update):
-    upd.message.reply_text(
-        f"Authorize notion first: https://ptn.potapov.dev"
-    )
+    upd.message.reply_text("Authorize notion first: https://ptn.potapov.dev")
 
 
 def telegram_webhook_handler(event: dict, context: dict) -> dict:
@@ -96,7 +94,7 @@ def notion_oauth(event: dict, context: dict) -> dict:
     owner_id = owner["user"]["id"]
     workspace_id = resp["workspace_id"]
 
-    for user in User.notion_bot_index.query(resp["bot_id"]):
+    for user in User.notion_bot_index.query(bot_id):
         user.notion_workspace_id = workspace_id
         user.notion_access_token = access_token
         user.notion_owner_id = owner_id
@@ -178,7 +176,7 @@ def parse_request(event):
     lower_headers = {k.lower(): v for k, v in event.get("headers", {}).items()}
     content_type = lower_headers.get("content-type")
     if content_type == "application/x-www-form-urlencoded":
-        data.update(urllib.parse.parse_qsl(event["body"]))
+        data |= urllib.parse.parse_qsl(event["body"])
     elif content_type and content_type.startswith("application/json"):
         data.update(json.loads(event["body"]))
     return data
